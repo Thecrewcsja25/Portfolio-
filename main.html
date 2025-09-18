@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Portafolio | Martin Escobar</title>
+  <!-- Google Fonts: Poppins & Roboto -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="front/styles.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="logo">
+      <span class="logo-circle">ME</span>
+      Martin Escobar
+    </div>
+    <nav>
+      <a href="#inicio" class="active">Inicio</a>
+      <a href="#about">Sobre mí</a>
+      <a href="#portfolio">Portafolio</a>
+      <a href="#Mapa">Puntos de interes</a>
+      <a href="#contact">Contacto</a>
+    </nav>
+    <button class="toggle-dark" id="toggleDark" title="Modo claro/oscuro">
+      <span id="darkIcon">🌙</span>
+    </button>
+  </header>
+
+  <main>
+    <span id="inicio"></span>
+    <section class="about" id="about">
+      <img src="https://media.licdn.com/dms/image/v2/D4E03AQExPrwhWusyuQ/profile-displayphoto-scale_200_200/B4EZimyxAdGUAc-/0/1755144984613?e=1761177600&v=beta&t=ea3eA1o9tvoeYmWxRjzVU0ECQImI9BB7KSq2ZsEwO9E" alt="Foto de perfil" class="about-img">
+      <div class="about-info">
+        <h2> Quien soy? </h2>
+        <p>
+          Estudiante de penúltimo año de Ingeniería de Software, con sólida formación en Python, Java, JavaScript, SQL, HTML, CSS y experiencia trabajando en entornos Linux. Tengo práctica en la aplicación de patrones de diseño y metodologías ágiles, desarrollando proyectos con herramientas profesionales como PyCharm, NetBeans y Visual Studio Code. Mi enfoque se centra en desarrollo web, backend y administración de redes, combinando habilidades técnicas con creatividad e innovación tecnológica. Apasionado por el aprendizaje continuo, siempre busco soluciones eficientes, escalables y de alto impacto en cada proyecto que emprendo!
+        </p>
+        <div class="about-social">
+          <a href="https://www.linkedin.com/in/martin-escobar-650a8a2a2" target="_blank" title="LinkedIn"><span aria-hidden="true">🔗</span></a>
+          <a href="https://github.com/Thecrewcsja25/" target="_blank" title="GitHub"><span aria-hidden="true">🐙</span></a>
+          <a href="mailto:martin.escobar1213@hotmail.com" title="Email"><span aria-hidden="true">✉️</span></a>
+        </div>
+      </div>
+    </section>
+    <section class="portfolio" id="portfolio">
+      <div class="portfolio-title">Portafolio</div>
+      <div class="portfolio-grid">
+        <div class="portfolio-card">
+          <img src="https://wallpapers.com/images/hd/dbz-pictures-eheu8mat0g7s4ddu.jpg" alt="Proyecto 1" class="portfolio-img">
+          <div class="portfolio-content">
+            <h3>DBZ: Interactive Dash!</h3>
+            <p>Una aplicación web interactiva que consume una API para mostrar información detallada de los planetas del universo de Dragon Ball Z. Permite explorar características, historia y datos curiosos de cada planeta, con un diseño visual atractivo y fácil de navegar, ideal para fanáticos y desarrolladores que quieren practicar consumo de APIs y manejo de datos dinámicos</p>
+            <a href="https://github.com/Thecrewcsja25/DBZ.git" target="_blank">Ver proyecto</a>
+          </div>
+        </div>
+        <div class="portfolio-card">
+          <img src="https://www.bbva.com.co/content/dam/public-web/colombia/images/blog/cuentas/250910-obtener-qr-transferencias-1819-card.jpg" alt="Proyecto 2" class="portfolio-img">
+          <div class="portfolio-content">
+            <h3>QR Transfer!</h3>
+            <p>Una aplicación web que convierte cualquier texto en códigos QR de manera rápida y sencilla. Permite a los usuarios generar, descargar e incluso personalizar sus códigos QR, todo con una interfaz clara y responsiva. Es ideal para aprender a integrar librerías de generación de QR, manipulación de datos en el front-end y ofrecer soluciones prácticas de interacción digita</p>
+            <a href="https://github.com/Thecrewcsja25/TDP.git" target="_blank">Ver proyecto</a>
+          </div>
+        </div>
+        <div class="portfolio-card">
+          <img src="https://s1.significados.com/foto/tipos-de-mapas-og.jpg?class=ogImageWide" alt="Proyecto 3" class="portfolio-img">
+          <div class="portfolio-content">
+            <h3>Maps!</h3>
+            <p>Un mapa interactivo sencillo que permite visualizar ubicaciones específicas en un entorno funcional. Incluye marcadores, popups informativos y una interfaz intuitiva, lo que lo hace ideal para proyectos de geolocalización, planificación de rutas o demostraciones de datos espaciales en tiempo real, combinando funcionalidad y diseño minimalista.</p>
+            <a href="https://github.com/Thecrewcsja25/DynamicMap.git" target="_blank">Ver proyecto</a>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="Mapa" id="Mapa">
+      <h2 class="Mapa-title">Opciones de postre nuevas que tal vez te gustaría probar!</h2>
+      <select id="categorySelector" class="custom-select"></select>
+      <div id="map"></div>
+      <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+      <script type="module">
+        const map = L.map('map').setView([4.68, -74.07], 12);
+
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        let markers = [];
+
+        // Función para hacer zoom suave y progresivo
+        function smoothZoomTo(coords, targetZoom) {
+          let currentZoom = map.getZoom();
+          let direction = targetZoom > currentZoom ? 1 : -1;
+          let interval = setInterval(() => {
+            if (currentZoom === targetZoom) {
+              clearInterval(interval);
+            } else {
+              currentZoom += direction;
+              map.setView(coords, currentZoom, { animate: true, pan: { duration: 0.5 } });
+              map.panTo(coords, { animate: true, duration: 0.5 });
+            }
+          }, 70);
+        }
+
+        // Función para limpiar todos los marcadores del mapa
+        function clearMarkers() {
+          markers.forEach(marker => map.removeLayer(marker));
+          markers = [];
+        }
+
+        // Función para añadir marcadores al mapa
+        function addMarkersToMap(puntos) {
+          puntos.forEach(p => {
+            let popupContent = `<strong>${p.nombre}</strong>`;
+            if (p.imagen) {
+              popupContent += `<br><img src="${p.imagen}" alt="${p.nombre}" class="popup-img">`;
+            }
+            if (p.descripcion) {
+              popupContent += `<br><span>${p.descripcion}</span>`;
+            }
+            const marker = L.marker(p.coords)
+              .addTo(map)
+              .bindPopup(popupContent);
+            
+            // Zoom suave al abrir el popup, como lo tenías
+            marker.on('popupopen', function() {
+              smoothZoomTo(p.coords, 15);
+            });
+
+            markers.push(marker);
+          });
+        }
+
+        function updateVideo(videoId) {
+        const videoEmbed = document.getElementById('video-embed');
+        if (videoEmbed) {
+            videoEmbed.src = `https://www.youtube.com/embed/${videoId}?rel=0&autoplay=0`;
+          }
+        }
+
+        // Función principal para cargar los datos de la API
+        async function loadData(endpoint) {
+        clearMarkers();
+        try {
+            const response = await fetch(`http://127.0.0.1:8000${endpoint}`);
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const puntos = await response.json();
+                addMarkersToMap(puntos);
+                
+                if (puntos.length > 0) {
+                    map.flyTo(puntos[0].coords, 13);
+                    updateVideo(puntos[0].ref); // Actualiza el video con el primer punto de interés
+                }
+            } catch (error) {
+                console.error("Error al cargar los datos:", error);
+                alert("Hubo un error al cargar los datos. Asegúrate de que tu servidor de FastAPI esté corriendo.");
+            }
+        }
+        // Lógica para el único selector
+        const categorySelector = document.getElementById('categorySelector');
+
+        const categories = [
+          { name: 'Beiked', endpoint: '/coordenadas/beiked' },
+          { name: 'La Galiet!', endpoint: '/coordenadas/lagaliet'},
+          { name: 'Maiz Kernel', endpoint: '/coordenadas/maiz-kernel' }
+        ];
+
+        // Llena el selector de forma dinámica
+        categories.forEach(cat => {
+          const option = document.createElement('option');
+          option.value = cat.endpoint;
+          option.textContent = cat.name;
+          categorySelector.appendChild(option);
+        });
+
+        // Carga los datos iniciales al abrir la página
+        loadData(categories[0].endpoint);
+
+        // Escucha el cambio de opción en el selector y carga los nuevos datos
+        categorySelector.addEventListener('change', function() {
+          const selectedEndpoint = this.value;
+          loadData(selectedEndpoint);
+        });
+      </script>
+    </section>
+    <section id="video-section">
+        <h2>Conoce el lugar</h2>
+        <div class="video-container">
+            <div class="video-responsive">
+                <iframe id="video-embed" src="about:blank" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contact">
+      <div class="contact-title">Contacto</div>
+      <form class="contact-form" id="contactForm" autocomplete="off">
+        <input type="text" name="nombre" placeholder="Nombre" required>
+        <input type="email" name="correo" placeholder="Correo electrónico" required>
+        <textarea name="mensaje" placeholder="Mensaje" required></textarea>
+        <button type="submit">Enviar</button>
+      </form>
+      <div class="contact-success" id="contactSuccess">¡Gracias por tu mensaje!</div>
+    </section>
+  </main>
+  <footer>
+    <div class="footer-social">
+      <a href="https://www.linkedin.com/in/martin-escobar-650a8a2a2" target="_blank" title="LinkedIn"><span aria-hidden="true">🔗</span></a>
+      <a href="https://github.com/Thecrewcsja25/" target="_blank" title="GitHub"><span aria-hidden="true">🐙</span></a>
+      <a href="mailto:martin.escobar@email.com" title="Email"><span aria-hidden="true">✉️</span></a>
+    </div>
+    <div class="footer-copy">
+      © 2025 | Martin Escobar | Todos los derechos reservados.
+    </div>
+  </footer>
+  <script>
+    // --- Navegación activa ---
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+        this.classList.add('active');
+      });
+    });
+    // --- Modo oscuro ---
+    const body = document.body;
+    const toggleDark = document.getElementById('toggleDark');
+    const darkIcon = document.getElementById('darkIcon');
+    function setDarkMode(on) {
+      if (on) {
+        body.classList.add('dark');
+        darkIcon.textContent = '☀️';
+        localStorage.setItem('darkMode', 'on');
+      } else {
+        body.classList.remove('dark');
+        darkIcon.textContent = '🌙';
+        localStorage.setItem('darkMode', 'off');
+      }
+    }
+    setDarkMode(localStorage.getItem('darkMode') === 'on');
+    toggleDark.addEventListener('click', () => {
+      setDarkMode(!body.classList.contains('dark'));
+    });
+    // --- Animación suave al hacer scroll a secciones ---
+    document.querySelectorAll('nav a').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const href = this.getAttribute('href');
+        if (href.startsWith('#')) {
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }
+      });
+    });
+    // --- Formulario de contacto (simulado) ---
+    const contactForm = document.getElementById('contactForm');
+    const contactSuccess = document.getElementById('contactSuccess');
+    contactForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      contactSuccess.style.display = 'block';
+      contactForm.reset();
+      setTimeout(() => { contactSuccess.style.display = 'none'; }, 3500);
+    });
+    // --- Animación de entrada para tarjetas de portafolio y blog ---
+    function animateCards(selector) {
+      const cards = document.querySelectorAll(selector);
+      const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = 1;
+            entry.target.style.transform = 'translateY(0)';
+          }
+        });
+      }, { threshold: 0.2 });
+      cards.forEach(card => {
+        card.style.opacity = 0;
+        card.style.transform = 'translateY(40px)';
+        card.style.transition = 'opacity 0.7s, transform 0.7s';
+        observer.observe(card);
+      });
+    }
+    animateCards('.portfolio-card');
+    animateCards('.blog-post');
+  </script>
+</body>
+</html>
